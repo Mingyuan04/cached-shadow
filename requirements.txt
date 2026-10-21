@@ -1,0 +1,6 @@
+numpy
+pandas
+scipy
+matplotlib
+pyreadr   # only for the stratEst code-test subset
+pytest

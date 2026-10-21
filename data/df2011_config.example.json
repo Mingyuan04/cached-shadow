@@ -1,0 +1,23 @@
+{
+  "_how_to": "Copy to data/df2011_config.json. Run `python -m src.prep --inspect <downloaded file>`, then put the real column names on the left of colmap. Delete treatment_params if the file already has delta and R columns; delete coop_values if cooperation is coded 0/1 or C/D.",
+  "path": "data/REPLACE_WITH_DOWNLOADED_FILE.dta",
+  "colmap": {
+    "session": "session",
+    "subject": "subject",
+    "supergame": "match",
+    "round": "round",
+    "coop": "coop",
+    "ocoop": "partner_coop",
+    "treatment": "treatment"
+  },
+  "constants": {"T": 50, "S": 12, "P": 25},
+  "treatment_params": {
+    "REPLACE_CODE_d05_R32": {"delta": 0.5, "R": 32},
+    "REPLACE_CODE_d05_R40": {"delta": 0.5, "R": 40},
+    "REPLACE_CODE_d05_R48": {"delta": 0.5, "R": 48},
+    "REPLACE_CODE_d075_R32": {"delta": 0.75, "R": 32},
+    "REPLACE_CODE_d075_R40": {"delta": 0.75, "R": 40},
+    "REPLACE_CODE_d075_R48": {"delta": 0.75, "R": 48}
+  },
+  "coop_values": {"1": 1, "2": 0}
+}
