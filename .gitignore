@@ -4,3 +4,4 @@ __pycache__/
 data/*.csv
 data/*.rda
 data/raw/
+data/df2011_config.json
