@@ -1,16 +1,14 @@
-"""Population-level fitting, cross-validation and recovery.
+"""Fitting, cross-validation and recovery.
 
-Why population level: with one subject's 23-77 first-round choices, these
-models are only weakly identified (per-subject recovery of the planner came out
-at r = 0.1-0.35 in a DF2011-sized design). Pooled over subjects, with treatments
-and session length sequences supplying the variation, recovery is near perfect.
-That is also how Mengel et al. (2022) and Fudenberg & Karreskog (2024) estimate.
-Individual differences need a hierarchical model: an extension, not week 2.
+Parameters are estimated for the whole population at once. With 23-77
+first-round choices per person the models are only weakly identified for a
+single subject (planner recovery r = 0.1-0.45 in simulations of this design),
+whereas pooled fits recover parameters almost perfectly; Mengel et al. (2022)
+and Fudenberg & Karreskog Rehbinder (2024) fit at the population level too.
 
-  python -m src.fitting --recover planner          # parameter recovery (works now)
-  python -m src.fitting --model-recovery           # after you implement the TODOs
-  python -m src.fitting --cv --stratest data/stratEst_DF2011_late_subset.rda   # code test
-  python -m src.fitting --cv --config data/df2011_config.json                  # real data
+    python -m src.fitting --recover planner
+    python -m src.fitting --model-recovery
+    python -m src.fitting --cv --config data/df2011_config.json
 """
 from __future__ import annotations
 
@@ -35,9 +33,6 @@ def _rows(d: dict, idx) -> dict:
             for k, v in d.items()}
 
 
-# ---------------------------------------------------------------------------
-# Fitting and comparison
-# ---------------------------------------------------------------------------
 def fit(model: str, d: dict, n_starts: int = 8, rng=None):
     """Pooled maximum likelihood: one parameter vector for all subjects in d."""
     rng = rng or np.random.default_rng(0)
@@ -84,9 +79,6 @@ def cv_by_session(models, d: dict, n_starts: int = 5) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values("held_out_nll")
 
 
-# ---------------------------------------------------------------------------
-# Simulation and recovery
-# ---------------------------------------------------------------------------
 def synthetic_population(rng, subjects_per_session=14, matches=45) -> dict:
     """A DF2011-like design: 6 treatments x 3 sessions; match lengths drawn once
     per session (shared by everyone in it); partners who start with C at a rate
@@ -105,8 +97,7 @@ def synthetic_population(rng, subjects_per_session=14, matches=45) -> dict:
                 sess += 1
     o1 = np.array([r[1] for r in rows])
     return {"L": np.array([r[0] for r in rows]), "o1": o1,
-            "o_any": o1.copy(),        # synthetic partners are pure Grim or pure AD
-
+            "o_any": o1.copy(),   # synthetic partners are pure Grim or pure AD
             "ET": np.array([r[2] for r in rows]), "g": np.array([r[3] for r in rows]),
             "l": np.array([r[4] for r in rows]), "session": np.array([r[5] for r in rows]),
             "mask": np.ones((len(rows), matches)), "pay": np.zeros((len(rows), matches))}
@@ -114,19 +105,6 @@ def synthetic_population(rng, subjects_per_session=14, matches=45) -> dict:
 
 def draw_params(model: str, rng):
     return np.array([rng.uniform(*r) for r in RECOVERY_RANGES[model].values()])
-
-
-def implemented_models() -> list:
-    """Models whose probability function has been written (not a TODO)."""
-    env = synthetic_population(np.random.default_rng(0), subjects_per_session=1, matches=3)
-    ready = []
-    for name, (fn, _) in MODELS.items():
-        try:
-            fn(draw_params(name, np.random.default_rng(0)), env)
-            ready.append(name)
-        except NotImplementedError:
-            pass
-    return ready
 
 
 def simulate(model: str, theta, env: dict, rng) -> dict:
@@ -201,10 +179,9 @@ def main():
         from .prep import load_from_config, load_stratest_df2011, match_table, to_arrays
         df = load_stratest_df2011(a.stratest) if a.stratest else load_from_config(a.config)
         d = to_arrays(match_table(df))
-        ready = implemented_models()
-        print("models implemented so far:", ready)
-        print(compare(ready, d).round(3).to_string(index=False))
-        print(cv_by_session(ready, d).round(4).to_string(index=False))
+        names = list(MODELS)
+        print(compare(names, d).round(3).to_string(index=False))
+        print(cv_by_session(names, d).round(4).to_string(index=False))
 
 
 if __name__ == "__main__":

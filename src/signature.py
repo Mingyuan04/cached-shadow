@@ -1,29 +1,20 @@
-"""Week 1 - the model-agnostic signature that separates the three accounts.
+"""Model-agnostic signature: does a long previous match raise first-round
+cooperation in the next one, even when the previous partner never cooperated?
 
-Question: does a LONG previous match make people start the next match by
-cooperating, even when the previous partner DEFECTED, i.e. even when the match
-paid nothing but mutual defection?
+    planner           no length effect after either kind of partner
+    value cache       an effect only after partners who cooperated; a long
+                      match with a defector pays no more than a short one
+    prediction cache  an effect after both, because every match updates the
+                      expected length of relationships
 
-  planner (instructed delta)        : no length effect after either partner type
-  value cache (Mengel et al. 2022;  : length effect only after a cooperative partner
-    Fudenberg & Karreskog 2024)       (a long match with a defector pays the same,
-                                      or less if you kept trying to cooperate)
-  prediction cache (SR-like)        : length effect after BOTH partner types,
-                                      because "how long relationships last" is
-                                      learned from every match, whatever happened
+The test uses partners who defected in every round, not just in round 1:
+in long matches, partners who start with D sometimes cooperate later, which
+would give payoff-based learners a reason to cooperate more as well.
 
-The decisive subset is the STRICT one: previous partner never cooperated in any
-round. "Defected in round 1" alone is not enough: in long matches such partners
-sometimes start cooperating later (about a quarter of the time in DF2011), which
-gives payoff-based learners a reason to cooperate more too.
+Linear probability model with subject fixed effects, SEs clustered by
+session, and a session-level bootstrap because there are only 18 sessions.
 
-Estimator: linear probability model with subject fixed effects (within
-transformation), standard errors clustered by session, plus a session-level
-cluster bootstrap because DF2011 has only 18 sessions.
-
-Usage
-  python -m src.signature --stratest data/stratEst_DF2011_late_subset.rda   # code test only
-  python -m src.signature --config data/df2011_config.json                  # full data
+    python -m src.signature --config data/df2011_config.json
 """
 from __future__ import annotations
 
@@ -125,8 +116,6 @@ def plot(m: pd.DataFrame, path: str = "figures/signature.png") -> None:
     ax.set_xlabel("previous match: realized minus expected length (rounds)")
     ax.set_ylabel("round-1 cooperation in next match\n(within-subject, grand mean added back)")
     ax.legend(frameon=False, fontsize=8)
-    ax.set_title("Planner: both flat | value cache: only upper line rises |\n"
-                 "prediction cache: both rise", fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=200)
 
