@@ -141,6 +141,13 @@ def model_recovery(models, n_datasets: int = 10, seed: int = 2, env_fn=synthetic
     return conf
 
 
+MODEL_NAMES = {"planner": "Planner", "value_cache": "Value cache", "prediction_cache": "Prediction cache",
+               "value_cache_plus": "Planner + cached value",
+               "prediction_cache_avg": "Prediction cache, decreasing rate", "both": "Both cached terms"}
+PARAM_SYMBOLS = {"beta": "β", "bias": "b", "kappa": "κ", "p0": "p₀", "eta": "η",
+                 "a0": "a₀", "lam": "λ", "alpha": "α", "n0": "n₀"}
+
+
 def plot_recovery(df: pd.DataFrame, corr: dict, model: str, path: str):
     import matplotlib
     matplotlib.use("Agg")
@@ -152,9 +159,9 @@ def plot_recovery(df: pd.DataFrame, corr: dict, model: str, path: str):
         lo = min(df[f"true_{n}"].min(), df[f"fit_{n}"].min())
         hi = max(df[f"true_{n}"].max(), df[f"fit_{n}"].max())
         ax.plot([lo, hi], [lo, hi], "k--", lw=0.8)
-        ax.set_title(f"{n}: r = {corr[n]:.2f}", fontsize=9)
+        ax.set_title(f"{PARAM_SYMBOLS.get(n, n)}: r = {corr[n]:.2f}", fontsize=9)
         ax.set_xlabel("true", fontsize=8); ax.set_ylabel("recovered", fontsize=8)
-    fig.suptitle(f"Population-level parameter recovery: {model}", fontsize=10)
+    fig.suptitle(f"Population-level parameter recovery: {MODEL_NAMES.get(model, model)}", fontsize=10)
     fig.tight_layout()
     fig.savefig(path, dpi=200)
 

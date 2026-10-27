@@ -104,11 +104,11 @@ def plot(m: pd.DataFrame, path: str = "figures/signature.png") -> None:
     # add back the grand mean.
     x["c1_within"] = x["c1"] - x.groupby("subject")["c1"].transform("mean") + x["c1"].mean()
     edges = [-np.inf, -1.5, -0.5, 0.5, 2.5, 5.5, np.inf]
-    labels = ["<= -2", "-1", "0", "+1..2", "+3..5", ">= +6"]
+    labels = ["≤ −2", "−1", "0", "+1–2", "+3–5", "≥ +6"]
     x["bin"] = pd.cut(x["Lrel_prev"], edges, labels=labels)
     fig, ax = plt.subplots(figsize=(6, 4))
     subsets = [(x["o1_prev"] == 1, "previous partner cooperated first", "o", "-"),
-               (x["o_any_prev"] == 0, "previous partner never cooperated (strict)", "s", "--")]
+               (x["o_any_prev"] == 0, "previous partner never cooperated", "s", "--")]
     for sel, name, mk, ls in subsets:
         s = x[sel].groupby("bin", observed=False)["c1_within"].agg(["mean", "sem"])
         ax.errorbar(range(len(labels)), s["mean"], yerr=s["sem"], marker=mk, ls=ls, capsize=3, label=name)

@@ -96,7 +96,7 @@ LABEL = {"planner": "Planner", "value_cache": "Value cache", "value_cache_plus":
          "both": "Both cached terms"}
 PANELS = [("after_C", "Previous partner\ncooperated in round 1"),
           ("after_D", "Previous partner\ndefected in round 1"),
-          ("strict", "Previous partner\nnever cooperated (decisive)")]
+          ("strict", "Previous partner\nnever cooperated")]
 
 
 def plot(sims: pd.DataFrame, path: str, observed: dict | None = None, title: str = ""):
