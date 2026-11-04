@@ -1,6 +1,6 @@
 # cached-shadow
 
-Code for *Is the shadow of the future cached as value or as prediction? Learning from relationship length in repeated cooperation* (Mingyuan Sheng, preprint in preparation). Preregistration: https://osf.io/bqge5
+Code for *Is the shadow of the future cached as value or as prediction? Learning from relationship length in repeated cooperation* (Mingyuan Sheng, submitted to Computational Brain & Behavior). Preregistration: https://osf.io/bqge5
 
 In indefinitely repeated prisoner's dilemma experiments, people are told how likely each match is to continue, yet a long previous match makes them more cooperative in the next one. The learning models that fit these data explain this with cached payoffs. I wanted to know whether people might be caching something else: an expectation of how long relationships last. The two ideas come apart after a long match with a partner who never cooperated. That match pays no more than a short one, so a payoff learner shouldn't care how long it was; a learner that tracks how long relationships last should.
 
